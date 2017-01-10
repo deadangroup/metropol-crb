@@ -1,13 +1,9 @@
 <?php
 
 /**
- * Sms
+ * CRB
  * @author    James Ngugi <ngugi823@gmail.com>
- * @copyright Copyright (c) James Ngugi
- * @license   All rights reserved.
  */
-
-namespace App\Libs\CRB;
 
 use Exception;
 
@@ -38,6 +34,7 @@ class Metropol
     private $baseEndpoint = "https://api.metropol.co.ke";
 
     /**
+     * Always clarify the port with CRB before making any connection
      * @var mixed
      */
     private $port = 443;
