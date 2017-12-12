@@ -8,7 +8,7 @@
 
 namespace Ngugi\Metropol;
 
-use Exception;
+use GuzzleHttp\Client;
 
 class Metropol
 {
@@ -22,16 +22,6 @@ class Metropol
     private $privateApiKey;
 
     /**
-     * @var mixed
-     */
-    private $responseBody;
-
-    /**
-     * @var mixed
-     */
-    private $responseInfo;
-
-    /**
      * @var string
      */
     private $baseEndpoint = "https://api.metropol.co.ke";
@@ -43,13 +33,25 @@ class Metropol
     private $port = 443;
 
     /**
-     * @param $argument
+     * @var Client
+     */
+    private $http;
+
+    /**
+     * Metropol constructor.
+     * @param $publicApiKey
+     * @param $privateApiKey
      */
     public function __construct($publicApiKey, $privateApiKey)
     {
-
-        $this->publicApiKey  = $publicApiKey;
+        $this->publicApiKey = $publicApiKey;
         $this->privateApiKey = $privateApiKey;
+
+        $this->http = new Client([
+            'base_uri'        => $this->baseEndpoint . ":" . $this->port,
+            'timeout'         => 60,
+            'allow_redirects' => true,
+        ]);
     }
 
     /**
@@ -64,17 +66,18 @@ class Metropol
         //calculate the rest api hash as required
         $apiHash = $this->calculateHash($payload, $apiTimestamp);
 
-        return array(
+        return [
             "X-METROPOL-REST-API-KEY:" . $this->publicApiKey,
             "X-METROPOL-REST-API-HASH:" . $apiHash,
             "X-METROPOL-REST-API-TIMESTAMP:" . $apiTimestamp,
             "Content-Type: application/json",
-        );
+        ];
     }
 
     /**
      * @param $payload
      * @param $apiTimestamp
+     * @return string
      */
     private function calculateHash($payload, $apiTimestamp)
     {
@@ -84,62 +87,36 @@ class Metropol
     }
 
     /**
-     * @param  $endpoint
-     * @param  $payload    json string
-     * @return mixed
+     * @param $endpoint
+     * @param $payload
+     * @return string
      */
     private function httpPost($endpoint, $payload)
     {
-
         $url = $this->baseEndpoint . ":" . $this->port . $endpoint;
 
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->setHeaders($payload));
+        $response = $this->http->request('POST', $url, [
+            'form_params' => $payload,
+            'headers'     => $this->setHeaders($payload),
+            'http_errors' => false //let users handle errors
+        ]);
 
-        return $this->doExecute($ch);
-
-    }
-
-    /**
-     * @param $curlHandle_
-     */
-    private function doExecute(&$curlHandle_)
-    {
-        try {
-
-            $this->responseBody = curl_exec($curlHandle_);
-
-            $this->responseInfo = curl_getinfo($curlHandle_);
-
-            curl_close($curlHandle_);
-
-            return $this->responseBody;
-
-        } catch (Exception $e) {
-            curl_close($curlHandle_);
-
-            throw $e;
-        }
+        return $response->getBody()->getContents();
     }
 
     /**
      * @param $id_number
-     * @return mixed
+     * @return array
      */
     public function identityVerification($id_number)
     {
         $endpoint = '/identity/verify';
 
-        $payload = json_encode(array(
+        $payload = json_encode([
             "report_type"     => 1,
             "identity_number" => (string) $id_number,
             "identity_type"   => "001",
-        ));
+        ]);
 
         return json_decode($this->httpPost($endpoint, $payload));
     }
@@ -147,18 +124,18 @@ class Metropol
     /**
      * @param $id_number
      * @param $loan_amount
-     * @return mixed
+     * @return array
      */
     public function deliquencyStatus($id_number, $loan_amount)
     {
         $endpoint = '/deliquency/status';
 
-        $payload = json_encode(array(
+        $payload = json_encode([
             "report_type"     => 2,
             "identity_number" => (string) $id_number,
             "identity_type"   => "001",
             "loan_amount"     => $loan_amount,
-        ));
+        ]);
 
         return json_decode($this->httpPost($endpoint, $payload));
     }
@@ -166,43 +143,41 @@ class Metropol
     /**
      * @param $id_number
      * @param $loan_amount
-     * @return mixed
+     * @return array
      */
     public function creditInfo($id_number, $loan_amount)
     {
         $endpoint = '/report/credit_info';
 
-        $payload = json_encode(array(
+        $payload = json_encode([
             "report_type"     => 8,
             "identity_number" => (string) $id_number,
             "identity_type"   => "001",
             "loan_amount"     => $loan_amount,
             "report_reason"   => 1,
-        ));
+        ]);
 
         return json_decode($this->httpPost($endpoint, $payload));
     }
 
     /**
      * @param $id_number
-     * @return mixed
+     * @return array
      */
-    public function ConsumerScore($id_number)
+    public function consumerScore($id_number)
     {
         $endpoint = '/score/consumer';
 
-        $payload = json_encode(array(
+        $payload = json_encode([
             "report_type"     => 3,
             "identity_number" => (string) $id_number,
             "identity_type"   => "001",
-        ));
+        ]);
 
         return json_decode($this->httpPost($endpoint, $payload));
     }
 
     /**
-     * Gets the value of publicApiKey.
-     *
      * @return mixed
      */
     public function getPublicApiKey()
@@ -211,21 +186,14 @@ class Metropol
     }
 
     /**
-     * Sets the value of publicApiKey.
-     *
-     * @param  mixed  $publicApiKey the public api key
-     * @return self
+     * @param mixed $publicApiKey
      */
     public function setPublicApiKey($publicApiKey)
     {
         $this->publicApiKey = $publicApiKey;
-
-        return $this;
     }
 
     /**
-     * Gets the value of privateApiKey.
-     *
      * @return mixed
      */
     public function getPrivateApiKey()
@@ -234,67 +202,14 @@ class Metropol
     }
 
     /**
-     * Sets the value of privateApiKey.
-     *
-     * @param  mixed  $privateApiKey the private api key
-     * @return self
+     * @param mixed $privateApiKey
      */
     public function setPrivateApiKey($privateApiKey)
     {
         $this->privateApiKey = $privateApiKey;
-
-        return $this;
     }
 
     /**
-     * Gets the value of responseBody.
-     *
-     * @return mixed
-     */
-    public function getResponseBody()
-    {
-        return $this->responseBody;
-    }
-
-    /**
-     * Sets the value of responseBody.
-     *
-     * @param  mixed  $responseBody the response body
-     * @return self
-     */
-    public function setResponseBody($responseBody)
-    {
-        $this->responseBody = $responseBody;
-
-        return $this;
-    }
-
-    /**
-     * Gets the value of responseInfo.
-     *
-     * @return mixed
-     */
-    public function getResponseInfo()
-    {
-        return $this->responseInfo;
-    }
-
-    /**
-     * Sets the value of responseInfo.
-     *
-     * @param  mixed  $responseInfo the response info
-     * @return self
-     */
-    public function setResponseInfo($responseInfo)
-    {
-        $this->responseInfo = $responseInfo;
-
-        return $this;
-    }
-
-    /**
-     * Gets the value of baseEndpoint.
-     *
      * @return string
      */
     public function getBaseEndpoint()
@@ -303,21 +218,14 @@ class Metropol
     }
 
     /**
-     * Sets the value of baseEndpoint.
-     *
-     * @param  string $baseEndpoint the base endpoint
-     * @return self
+     * @param string $baseEndpoint
      */
     public function setBaseEndpoint($baseEndpoint)
     {
         $this->baseEndpoint = $baseEndpoint;
-
-        return $this;
     }
 
     /**
-     * Gets the value of port.
-     *
      * @return mixed
      */
     public function getPort()
@@ -326,15 +234,26 @@ class Metropol
     }
 
     /**
-     * Sets the value of port.
-     *
-     * @param  mixed  $port the port
-     * @return self
+     * @param mixed $port
      */
     public function setPort($port)
     {
         $this->port = $port;
+    }
 
-        return $this;
+    /**
+     * @return Client
+     */
+    public function getHttp()
+    {
+        return $this->http;
+    }
+
+    /**
+     * @param Client $http
+     */
+    public function setHttp(Client $http)
+    {
+        $this->http = $http;
     }
 }
