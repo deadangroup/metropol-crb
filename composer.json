@@ -1,11 +1,10 @@
 {
     "name": "ngugijames/metropol",
-    "description": "",
-    "keywords": ["", ""],
+    "description": "Metropol CRB(Credit Reference Bureau) API wrapper",
+    "keywords": ["CRB", "Metropol"],
     "authors": [{
         "name": ":James Ngugi",
-        "email": "ngugi823@gmail.com",
-        "role": "Developer"
+        "email": "ngugi823@gmail.com"
     }],
     "require": {
         "php": ">=5.3.0"
@@ -14,13 +13,5 @@
         "psr-4": {
             "Ngugi\\Metropol\\": "src"
         }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Ngugi\\Metropol\\Test\\": "tests"
-        }
-    },
-    "scripts": {
-        "test": "phpunit"
     }
 }
