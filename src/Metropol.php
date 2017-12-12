@@ -38,6 +38,12 @@ class Metropol
     private $http;
 
     /**
+     * The Metropol API version
+     * @var string
+     */
+    private $version = null;
+
+    /**
      * Metropol constructor.
      * @param $publicApiKey
      * @param $privateApiKey
@@ -55,9 +61,29 @@ class Metropol
     }
 
     /**
+     * @param string $version
+     */
+    public function withVersion($version)
+    {
+        $this->version = $version;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getVersion()
+    {
+        if (!is_null($this->version)) {
+            return '/' . $this->version;
+        }
+
+        return null;
+    }
+
+    /**
      * @param $payload
      */
-    private function setHeaders($payload)
+    private function withHeaders($payload)
     {
         //calculate the timestamp as required e.g 2014 07 08 17 58 39 987843
         //Format: Year, Month, Day, Hour, Minute, Second, Milliseconds
@@ -72,6 +98,56 @@ class Metropol
             "X-METROPOL-REST-API-TIMESTAMP:" . $apiTimestamp,
             "Content-Type: application/json",
         ];
+    }
+
+    /**
+     * @param $publicApiKey
+     * @return $this
+     */
+    public function withPublicApiKey($publicApiKey)
+    {
+        $this->publicApiKey = $publicApiKey;
+        return $this;
+    }
+
+    /**
+     * @param $privateApiKey
+     * @return $this
+     */
+    public function withPrivateApiKey($privateApiKey)
+    {
+        $this->privateApiKey = $privateApiKey;
+        return $this;
+    }
+
+    /**
+     * @param $baseEndpoint
+     * @return $this
+     */
+    public function withBaseEndpoint($baseEndpoint)
+    {
+        $this->baseEndpoint = $baseEndpoint;
+        return $this;
+    }
+
+    /**
+     * @param $port
+     * @return $this
+     */
+    public function withPort($port)
+    {
+        $this->port = $port;
+        return $this;
+    }
+
+    /**
+     * @param Client $http
+     * @return $this
+     */
+    public function withHttp(Client $http)
+    {
+        $this->http = $http;
+        return $this;
     }
 
     /**
@@ -93,11 +169,11 @@ class Metropol
      */
     private function httpPost($endpoint, $payload)
     {
-        $url = $this->baseEndpoint . ":" . $this->port . $endpoint;
+        $url = $this->getVersion() . $endpoint;
 
         $response = $this->http->request('POST', $url, [
             'form_params' => $payload,
-            'headers'     => $this->setHeaders($payload),
+            'headers'     => $this->withHeaders($payload),
             'http_errors' => false //let users handle errors
         ]);
 
@@ -112,11 +188,11 @@ class Metropol
     {
         $endpoint = '/identity/verify';
 
-        $payload = json_encode([
+        $payload = [
             "report_type"     => 1,
             "identity_number" => (string) $id_number,
             "identity_type"   => "001",
-        ]);
+        ];
 
         return json_decode($this->httpPost($endpoint, $payload));
     }
@@ -130,12 +206,12 @@ class Metropol
     {
         $endpoint = '/deliquency/status';
 
-        $payload = json_encode([
+        $payload = [
             "report_type"     => 2,
             "identity_number" => (string) $id_number,
             "identity_type"   => "001",
             "loan_amount"     => $loan_amount,
-        ]);
+        ];
 
         return json_decode($this->httpPost($endpoint, $payload));
     }
@@ -149,13 +225,13 @@ class Metropol
     {
         $endpoint = '/report/credit_info';
 
-        $payload = json_encode([
+        $payload = [
             "report_type"     => 8,
             "identity_number" => (string) $id_number,
             "identity_type"   => "001",
             "loan_amount"     => $loan_amount,
             "report_reason"   => 1,
-        ]);
+        ];
 
         return json_decode($this->httpPost($endpoint, $payload));
     }
@@ -168,92 +244,12 @@ class Metropol
     {
         $endpoint = '/score/consumer';
 
-        $payload = json_encode([
+        $payload = [
             "report_type"     => 3,
             "identity_number" => (string) $id_number,
             "identity_type"   => "001",
-        ]);
+        ];
 
         return json_decode($this->httpPost($endpoint, $payload));
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPublicApiKey()
-    {
-        return $this->publicApiKey;
-    }
-
-    /**
-     * @param mixed $publicApiKey
-     */
-    public function setPublicApiKey($publicApiKey)
-    {
-        $this->publicApiKey = $publicApiKey;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPrivateApiKey()
-    {
-        return $this->privateApiKey;
-    }
-
-    /**
-     * @param mixed $privateApiKey
-     */
-    public function setPrivateApiKey($privateApiKey)
-    {
-        $this->privateApiKey = $privateApiKey;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBaseEndpoint()
-    {
-        return $this->baseEndpoint;
-    }
-
-    /**
-     * @param string $baseEndpoint
-     */
-    public function setBaseEndpoint($baseEndpoint)
-    {
-        $this->baseEndpoint = $baseEndpoint;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPort()
-    {
-        return $this->port;
-    }
-
-    /**
-     * @param mixed $port
-     */
-    public function setPort($port)
-    {
-        $this->port = $port;
-    }
-
-    /**
-     * @return Client
-     */
-    public function getHttp()
-    {
-        return $this->http;
-    }
-
-    /**
-     * @param Client $http
-     */
-    public function setHttp(Client $http)
-    {
-        $this->http = $http;
     }
 }

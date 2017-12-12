@@ -39,3 +39,34 @@ http://metropol.co.ke/
 	    $result=$metropol->consumerScore($id_number);
 	     
 All methods return an array. Check the [docs folder](/Docs) for sample results
+
+## Detailed Example
+
+You can override all the options used when calling the api by calling the setter methods on the Metropol object
+
+     <?php 
+        use Ngugi\Metropol\Metropol;
+        
+        $metropolPublicKey='dshdhggdid';
+        $metropolPrivateKey='UYGSYGA';
+        $metropol=new Metropol($metropolPublicKey,$metropolPrivateKey);
+        
+        //override all options
+        $metropol=$metropol->withVersion('2.1')
+        ->withPort(443)
+        ->withPublicApiKey('NEW_PUB-KEY')
+        ->withPrivateKey('NEW-PRIVATE-KEY');
+    
+	    //verify ID number
+	    $result=$metropol->identityVerification($id_number); 
+    
+	    //check deliquency status of an ID number for a loan amount
+	    $result=$metropol->deliquencyStatus($id_number, $loan_amount); 
+    
+	    //check credit Info of an ID number for a loan amount
+	    $result=$metropol->creditInfo($id_number, $loan_amount); 
+    
+	    //check consumer score of ID number
+	    $result=$metropol->consumerScore($id_number);
+	     
+All methods return an array. Check the [docs folder](/Docs) for sample results
