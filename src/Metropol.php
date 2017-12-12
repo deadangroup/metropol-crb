@@ -297,10 +297,8 @@ class Metropol
      */
     public function log($message, $context = [])
     {
-        echo $message . json_encode($context);
-
         if ($this->logger) {
-            $this->logger->info($message, $context);
+            $this->logger->log("info", $message, $context);
         }
     }
 
