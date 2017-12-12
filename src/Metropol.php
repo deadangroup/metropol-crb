@@ -128,9 +128,8 @@ class Metropol
     }
 
     /**
-     * [identityVerification description]
-     * @param  [type]     $id_number [description]
-     * @return stdClass
+     * @param $id_number
+     * @return mixed
      */
     public function identityVerification($id_number)
     {
@@ -146,10 +145,9 @@ class Metropol
     }
 
     /**
-     * [deliquencyStatus description]
-     * @param  [type]   $id_number      [description]
-     * @param  [type]   $loan_amount    [description]
-     * @return stdClass [description]
+     * @param $id_number
+     * @param $loan_amount
+     * @return mixed
      */
     public function deliquencyStatus($id_number, $loan_amount)
     {
@@ -166,10 +164,9 @@ class Metropol
     }
 
     /**
-     * [creditInfo description]
-     * @param  [type]   $id_number      [description]
-     * @param  [type]   $loan_amount    [description]
-     * @return stdClass [description]
+     * @param $id_number
+     * @param $loan_amount
+     * @return mixed
      */
     public function creditInfo($id_number, $loan_amount)
     {
@@ -187,9 +184,8 @@ class Metropol
     }
 
     /**
-     * [ConsumerScore description]
-     * @param  [type]     $id_number [description]
-     * @return stdClass
+     * @param $id_number
+     * @return mixed
      */
     public function ConsumerScore($id_number)
     {

@@ -1,21 +1,11 @@
-	{
-
-	    "has_error": false,
-
-	    "api_code": null,
-
-	    "api_code_description": null,
-
-	    "trx_id": "7579d9a5-368f-4c8a-9125-db5a7d24f0b7",
-
-	    "identity_number": "880000088",
-
-	    "identity_type": "005",
-
-	    "loan_amount": 10000,
-
-	    "delinquency_code": "004",
-
-	    "delinquency_summary": "Current delinquency True"
-
-	}
+{
+  "has_error": false,
+  "api_code": null,
+  "api_code_description": null,
+  "trx_id": "7579d9a5-368f-4c8a-9125-db5a7d24f0b7",
+  "identity_number": "880000088",
+  "identity_type": "005",
+  "loan_amount": 10000,
+  "delinquency_code": "004",
+  "delinquency_summary": "Current delinquency True"
+}
