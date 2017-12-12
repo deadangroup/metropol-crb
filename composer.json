@@ -2,6 +2,7 @@
     "name": "ngugijames/metropol",
     "description": "Metropol CRB(Credit Reference Bureau) API wrapper",
     "keywords": ["CRB", "Metropol"],
+     "license": "MIT",
     "authors": [{
         "name": ":James Ngugi",
         "email": "ngugi823@gmail.com"
