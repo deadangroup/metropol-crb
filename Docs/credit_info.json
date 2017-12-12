@@ -1,171 +1,86 @@
 {
-
-    "account_info": [
-
-        {
-
-            "account_number": "DM_8820191767488",
-
-            "current_balance": "0.00000",
-
-            "date_opened": "2008-01-14",
-
-            "days_in_arrears": 0,
-
-            "delinquency_code": "005",
-
-            "is_your_account": false,
-
-            "last_payment_amount": "5903.77000",
-
-            "last_payment_date": "2014-08-15",
-
-            "loaded_at": "2014-08-31 23:59:59",
-
-            "original_amount": "5762.07000",
-
-            "overdue_balance": "0.00000",
-
-            "overdue_date": "None",
-
-            "product_type_id": 7
-
-        },
-
-        {
-
-            "account_number": "DM_88100521214888",
-
-            "current_balance": "6600.00000",
-
-            "date_opened": "2014-04-29",
-
-            "days_in_arrears": 0,
-
-            "delinquency_code": "003",
-
-            "is_your_account": false,
-
-            "last_payment_amount": "0.50000",
-
-            "last_payment_date": "2014-04-29",
-
-            "loaded_at": "2014-08-31 23:59:59",
-
-            "original_amount": "60000.00000",           
-
-                "overdue_balance": "0.00000",
-
-            "overdue_date": "None",
-
-            "product_type_id": 8
-
-        },
-
-        {
-
-            "account_number": "DM_880424000250088",
-
-            "current_balance": "606596.00000",
-
-            "date_opened": "2014-04-22",
-
-            "days_in_arrears": 0,
-
-            "delinquency_code": "003",
-
-            "is_your_account": false,
-
-            "last_payment_amount": "15989.50000",
-
-            "last_payment_date": "2014-08-29",
-
-            "loaded_at": "2014-08-31 23:59:59",
-
-            "original_amount": "631000.00000",
-
-            "overdue_balance": "0.00000",
-
-            "overdue_date": "None",
-
-            "product_type_id": 14
-
-        }
-
-    ],
-
-    "api_code": null,
-
-    "api_code_description": null,
-
-    "credit_score": 501,
-
-    "delinquency_code": "005",
-
-    "has_error": false,
-
-    "has_fraud": false,
-
-    "identity_number": "880000088",
-
-    "identity_type": "001",
-
-    "is_guarantor": false,
-
-    "lender_sector": {
-
-        "sector_bank": {
-
-            "account_npa": 0,
-
-            "account_performing": 1,
-
-            "account_performing_npa_history": 0
-
-        },
-
-        "sector_other": {
-
-            "account_npa": 0,
-
-            "account_performing": 1,
-
-            "account_performing_npa_history": 0
-
-        }
-
+  "account_info": [
+    {
+      "account_number": "DM_8820191767488",
+      "current_balance": "0.00000",
+      "date_opened": "2008-01-14",
+      "days_in_arrears": 0,
+      "delinquency_code": "005",
+      "is_your_account": false,
+      "last_payment_amount": "5903.77000",
+      "last_payment_date": "2014-08-15",
+      "loaded_at": "2014-08-31 23:59:59",
+      "original_amount": "5762.07000",
+      "overdue_balance": "0.00000",
+      "overdue_date": "None",
+      "product_type_id": 7
     },
-
-    "no_of_bounced_cheques": {
-
-        "last_12_months": 0,
-
-        "last_3_months": 0,
-
-        "last_6_months": 0
-
+    {
+      "account_number": "DM_88100521214888",
+      "current_balance": "6600.00000",
+      "date_opened": "2014-04-29",
+      "days_in_arrears": 0,
+      "delinquency_code": "003",
+      "is_your_account": false,
+      "last_payment_amount": "0.50000",
+      "last_payment_date": "2014-04-29",
+      "loaded_at": "2014-08-31 23:59:59",
+      "original_amount": "60000.00000",
+      "overdue_balance": "0.00000",
+      "overdue_date": "None",
+      "product_type_id": 8
     },
-
-    "no_of_credit_applications": {
-
-        "last_12_months": 0,
-
-        "last_3_months": 0,
-
-        "last_6_months": 0
-
+    {
+      "account_number": "DM_880424000250088",
+      "current_balance": "606596.00000",
+      "date_opened": "2014-04-22",
+      "days_in_arrears": 0,
+      "delinquency_code": "003",
+      "is_your_account": false,
+      "last_payment_amount": "15989.50000",
+      "last_payment_date": "2014-08-29",
+      "loaded_at": "2014-08-31 23:59:59",
+      "original_amount": "631000.00000",
+      "overdue_balance": "0.00000",
+      "overdue_date": "None",
+      "product_type_id": 14
+    }
+  ],
+  "api_code": null,
+  "api_code_description": null,
+  "credit_score": 501,
+  "delinquency_code": "005",
+  "has_error": false,
+  "has_fraud": false,
+  "identity_number": "880000088",
+  "identity_type": "001",
+  "is_guarantor": false,
+  "lender_sector": {
+    "sector_bank": {
+      "account_npa": 0,
+      "account_performing": 1,
+      "account_performing_npa_history": 0
     },
-
-    "no_of_enquiries": {
-
-        "last_12_months": 0,
-
-        "last_3_months": 0,
-
-        "last_6_months": 0
-
-    },
-
-    "trx_id": "e19fdf9b-1893-4e89-bdd7-94630a6d8b78"
-
+    "sector_other": {
+      "account_npa": 0,
+      "account_performing": 1,
+      "account_performing_npa_history": 0
+    }
+  },
+  "no_of_bounced_cheques": {
+    "last_12_months": 0,
+    "last_3_months": 0,
+    "last_6_months": 0
+  },
+  "no_of_credit_applications": {
+    "last_12_months": 0,
+    "last_3_months": 0,
+    "last_6_months": 0
+  },
+  "no_of_enquiries": {
+    "last_12_months": 0,
+    "last_3_months": 0,
+    "last_6_months": 0
+  },
+  "trx_id": "e19fdf9b-1893-4e89-bdd7-94630a6d8b78"
 }
