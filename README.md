@@ -2,9 +2,9 @@
 
 <p align="center">
 <a href="https://travis-ci.org/ngugijames/metropol-crb"><img src="https://travis-ci.org/ngugijames/metropol.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/ngugijames/metropol"><img src="https://poser.pugx.org/ngugijames/metropol-crb/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/ngugijames/metropol"><img src="https://poser.pugx.org/ngugijames/metropol-crb/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/ngugijames/metropol"><img src="https://poser.pugx.org/ngugijames/metropol-crb/license.svg" alt="License"></a>
+  [![Latest Stable Version](https://poser.pugx.org/ngugijames/metropol/v/stable)](https://packagist.org/packages/ngugijames/metropol)
+  [![Daily Downloads](https://poser.pugx.org/ngugijames/metropol/d/daily)](https://packagist.org/packages/ngugijames/metropol)
+    [![License](https://poser.pugx.org/ngugijames/metropol/license)](https://packagist.org/packages/ngugijames/metropol)
 </p>
 
 ## About Metropol-CRB
