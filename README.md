@@ -20,6 +20,9 @@ http://metropol.co.ke/
 
 ## Quick Example
      <?php 
+        //get the composer autoloader, if necessary
+        require_once '../vendor/autoload.php';
+             
         use Ngugi\Metropol\Metropol;
         
         $metropolPublicKey='dshdhggdid';
@@ -45,6 +48,9 @@ All methods return an array. Check the [docs folder](/Docs) for sample results
 You can override all the options used when calling the api by calling the setter methods on the Metropol object
 
      <?php 
+        //get the composer autoloader, if necessary
+        require_once '../vendor/autoload.php';
+     
         use Ngugi\Metropol\Metropol;
         
         $metropolPublicKey='dshdhggdid';

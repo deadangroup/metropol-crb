@@ -8,7 +8,9 @@
 
 namespace Ngugi\Metropol;
 
+use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Psr\Log\LoggerInterface;
 
 class Metropol
 {
@@ -44,6 +46,11 @@ class Metropol
     private $version = null;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger = null;
+
+    /**
      * Metropol constructor.
      * @param $publicApiKey
      * @param $privateApiKey
@@ -61,11 +68,13 @@ class Metropol
     }
 
     /**
-     * @param string $version
+     * @param $version
+     * @return Metropol
      */
     public function withVersion($version)
     {
         $this->version = $version;
+        return $this;
     }
 
     /**
@@ -82,27 +91,39 @@ class Metropol
 
     /**
      * @param $payload
+     * @return array
      */
-    private function withHeaders($payload)
+    private function setHeaders($payload)
     {
         //calculate the timestamp as required e.g 2014 07 08 17 58 39 987843
         //Format: Year, Month, Day, Hour, Minute, Second, Milliseconds
-        $apiTimestamp = date('Y') . date('m') . date('d') . date('G') . date('i') . date('s') . date('u');
+        $now = Carbon::now('UTC');
+
+        $apiTimestamp = $now->year //Year
+            . $now->month //Month
+            . $now->day //Day
+            . $now->hour //Hour
+            . $now->minute //Minute
+            . $now->second //Second
+            . $now->micro; //Milliseconds
 
         //calculate the rest api hash as required
         $apiHash = $this->calculateHash($payload, $apiTimestamp);
 
-        return [
+        $headers = [
             "X-METROPOL-REST-API-KEY:" . $this->publicApiKey,
             "X-METROPOL-REST-API-HASH:" . $apiHash,
             "X-METROPOL-REST-API-TIMESTAMP:" . $apiTimestamp,
-            "Content-Type: application/json",
         ];
+
+        $this->log("Metropol API Headers:", $headers);
+
+        return array_values($headers);
     }
 
     /**
      * @param $publicApiKey
-     * @return $this
+     * @return Metropol
      */
     public function withPublicApiKey($publicApiKey)
     {
@@ -112,7 +133,7 @@ class Metropol
 
     /**
      * @param $privateApiKey
-     * @return $this
+     * @return Metropol
      */
     public function withPrivateApiKey($privateApiKey)
     {
@@ -122,7 +143,7 @@ class Metropol
 
     /**
      * @param $baseEndpoint
-     * @return $this
+     * @return Metropol
      */
     public function withBaseEndpoint($baseEndpoint)
     {
@@ -132,7 +153,7 @@ class Metropol
 
     /**
      * @param $port
-     * @return $this
+     * @return Metropol
      */
     public function withPort($port)
     {
@@ -142,11 +163,21 @@ class Metropol
 
     /**
      * @param Client $http
-     * @return $this
+     * @return Metropol
      */
     public function withHttp(Client $http)
     {
         $this->http = $http;
+        return $this;
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return Metropol
+     */
+    public function withLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
         return $this;
     }
 
@@ -157,7 +188,7 @@ class Metropol
      */
     private function calculateHash($payload, $apiTimestamp)
     {
-        $string = $this->privateApiKey . $payload . $this->publicApiKey . $apiTimestamp;
+        $string = $this->privateApiKey . json_encode($payload) . $this->publicApiKey . $apiTimestamp;
 
         return hash('sha256', $string);
     }
@@ -165,19 +196,26 @@ class Metropol
     /**
      * @param $endpoint
      * @param $payload
-     * @return string
+     * @return array
      */
-    private function httpPost($endpoint, $payload)
+    public function httpPost($endpoint, $payload)
     {
         $url = $this->getVersion() . $endpoint;
 
+        $this->log("Metropol API URL:" . $url);
+        $this->log("Metropol API Payload:", $payload);
+
         $response = $this->http->request('POST', $url, [
-            'form_params' => $payload,
-            'headers'     => $this->withHeaders($payload),
-            'http_errors' => false //let users handle errors
+            'json'        => $payload,
+            'headers'     => $this->setHeaders($payload),
+            'http_errors' => true, //let users handle errors
         ]);
 
-        return $response->getBody()->getContents();
+        $contents = $response->getBody()->getContents();
+
+        $this->log("Metropol API Response:" . $contents);
+
+        return json_decode($contents);
     }
 
     /**
@@ -194,7 +232,7 @@ class Metropol
             "identity_type"   => "001",
         ];
 
-        return json_decode($this->httpPost($endpoint, $payload));
+        return $this->httpPost($endpoint, $payload);
     }
 
     /**
@@ -213,7 +251,7 @@ class Metropol
             "loan_amount"     => $loan_amount,
         ];
 
-        return json_decode($this->httpPost($endpoint, $payload));
+        return $this->httpPost($endpoint, $payload);
     }
 
     /**
@@ -233,7 +271,7 @@ class Metropol
             "report_reason"   => 1,
         ];
 
-        return json_decode($this->httpPost($endpoint, $payload));
+        return $this->httpPost($endpoint, $payload);
     }
 
     /**
@@ -250,6 +288,20 @@ class Metropol
             "identity_type"   => "001",
         ];
 
-        return json_decode($this->httpPost($endpoint, $payload));
+        return $this->httpPost($endpoint, $payload);
     }
+
+    /**
+     * @param $message
+     * @param array $context
+     */
+    public function log($message, $context = [])
+    {
+        echo $message . json_encode($context);
+
+        if ($this->logger) {
+            $this->logger->info($message, $context);
+        }
+    }
+
 }
