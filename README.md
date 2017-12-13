@@ -17,6 +17,7 @@ http://metropol.co.ke/
 ## Installation
 
     composer require ngugijames/metropol
+    composer install
 
 ## Quick Example
      <?php 

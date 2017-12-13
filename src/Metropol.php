@@ -29,7 +29,7 @@ class Metropol
     private $baseEndpoint = "https://api.metropol.co.ke";
 
     /**
-     * Always clarify the port with CRB before making any connection
+     * Always clarify the port with MCRB before making any connection
      * @var mixed
      */
     private $port = 443;
@@ -43,7 +43,7 @@ class Metropol
      * The Metropol API version
      * @var string
      */
-    private $version = null;
+    private $version = 'v2';
 
     /**
      * @var LoggerInterface
@@ -61,9 +61,10 @@ class Metropol
         $this->privateApiKey = $privateApiKey;
 
         $this->http = new Client([
-            'base_uri'        => $this->baseEndpoint . ":" . $this->port,
             'timeout'         => 60,
             'allow_redirects' => true,
+            'http_errors'     => true, //let users handle errors
+            'verify'          => false,
         ]);
     }
 
@@ -90,35 +91,11 @@ class Metropol
     }
 
     /**
-     * @param $payload
-     * @return array
+     * @return string
      */
-    private function setHeaders($payload)
+    public function getBaseUrl()
     {
-        //calculate the timestamp as required e.g 2014 07 08 17 58 39 987843
-        //Format: Year, Month, Day, Hour, Minute, Second, Milliseconds
-        $now = Carbon::now('UTC');
-
-        $apiTimestamp = $now->year //Year
-            . $now->month //Month
-            . $now->day //Day
-            . $now->hour //Hour
-            . $now->minute //Minute
-            . $now->second //Second
-            . $now->micro; //Milliseconds
-
-        //calculate the rest api hash as required
-        $apiHash = $this->calculateHash($payload, $apiTimestamp);
-
-        $headers = [
-            "X-METROPOL-REST-API-KEY:" . $this->publicApiKey,
-            "X-METROPOL-REST-API-HASH:" . $apiHash,
-            "X-METROPOL-REST-API-TIMESTAMP:" . $apiTimestamp,
-        ];
-
-        $this->log("Metropol API Headers:", $headers);
-
-        return array_values($headers);
+        return $this->baseEndpoint . ":" . $this->port;
     }
 
     /**
@@ -183,12 +160,40 @@ class Metropol
 
     /**
      * @param $payload
+     * @return array
+     */
+    private function setHeaders($payload)
+    {
+        //calculate the timestamp as required e.g 2014 07 08 17 58 39 987843
+        //Format: Year, Month, Day, Hour, Minute, Second, Milliseconds
+        $now = Carbon::now('UTC');
+
+        $apiTimestamp = $now->format('Y-m-d-H-i-s-u');
+        $apiTimestamp = str_replace('-', '', $apiTimestamp);
+
+        //calculate the rest api hash as required
+        $apiHash = $this->calculateHash($payload, $apiTimestamp);
+
+        $headers = [
+            "X-METROPOL-REST-API-KEY:" . $this->publicApiKey,
+            "X-METROPOL-REST-API-HASH:" . $apiHash,
+            "X-METROPOL-REST-API-TIMESTAMP:" . $apiTimestamp,
+            "Content-Type:application/json"
+        ];
+
+        $this->log("Metropol API Headers:", $headers);
+
+        return array_values($headers);
+    }
+
+    /**
+     * @param $payload
      * @param $apiTimestamp
      * @return string
      */
     private function calculateHash($payload, $apiTimestamp)
     {
-        $string = $this->privateApiKey . json_encode($payload) . $this->publicApiKey . $apiTimestamp;
+        $string = $this->privateApiKey . trim(json_encode($payload)) . $this->publicApiKey . $apiTimestamp;
 
         return hash('sha256', $string);
     }
@@ -200,15 +205,14 @@ class Metropol
      */
     public function httpPost($endpoint, $payload)
     {
-        $url = $this->getVersion() . $endpoint;
+        $url = $this->getBaseUrl() . $this->getVersion() . $endpoint;
 
         $this->log("Metropol API URL:" . $url);
         $this->log("Metropol API Payload:", $payload);
 
         $response = $this->http->request('POST', $url, [
-            'json'        => $payload,
-            'headers'     => $this->setHeaders($payload),
-            'http_errors' => true, //let users handle errors
+            'json'    => $payload,
+            'headers' => $this->setHeaders($payload),
         ]);
 
         $contents = $response->getBody()->getContents();
@@ -216,6 +220,17 @@ class Metropol
         $this->log("Metropol API Response:" . $contents);
 
         return json_decode($contents);
+    }
+
+    /**
+     * @param $message
+     * @param array $context
+     */
+    public function log($message, $context = [])
+    {
+        if ($this->logger) {
+            $this->logger->log("info", $message, $context);
+        }
     }
 
     /**
@@ -289,17 +304,6 @@ class Metropol
         ];
 
         return $this->httpPost($endpoint, $payload);
-    }
-
-    /**
-     * @param $message
-     * @param array $context
-     */
-    public function log($message, $context = [])
-    {
-        if ($this->logger) {
-            $this->logger->log("info", $message, $context);
-        }
     }
 
 }
