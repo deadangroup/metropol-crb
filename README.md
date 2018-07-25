@@ -1,5 +1,7 @@
 <h2 align="center">Metropol CRB</h2>
 
+<h3 align="center">Warning: Abandoned. I no longer have the time to manage this repository. It is likely the Metropol API has changed.</h3>
+
 <p align="center">
   
 <a href="https://travis-ci.org/ngugijames/metropol-crb"><img src="https://travis-ci.org/ngugijames/metropol.svg" alt="Build Status"></a>
